@@ -76,7 +76,7 @@ function App() {
     <div className={'w-screen h-screen'}>
       <Canvas className={'h-full w-full'}>
         <Suspense fallback={null}>
-          <Bounds fit={true} frustumCulled={true}>
+          <Bounds fit={true} frustumCulled={true} margin={0}>
             <ImagePlane />
           </Bounds>
           <OrbitControls />
