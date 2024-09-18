@@ -50,24 +50,32 @@ extend({
   ),
 });
 
-function ImagePlane() {
+function useMouseMovementMaterial() {
+  const bounds = useBounds();
+  useEffect(() => {
+    bounds.refresh().clip().fit();
+  }, [bounds]);
+  const delta = 0.01;
+
   const depthMaterial = useRef<{ uMouse: number[] }>({ uMouse: [0, 0] });
+  useFrame(
+    (state) => (depthMaterial.current.uMouse = [state.pointer.x * delta, state.pointer.y * delta])
+  );
+  return depthMaterial;
+}
+
+function ImagePlane() {
   const { depthImagePath, colorImagePath } = useControls({
     depthImagePath: '/image.webp',
     colorImagePath: '/color.jpg',
   });
-  const bounds = useBounds();
-  useEffect(() => {
-    bounds.refresh().clip().fit();
-  }, []);
 
   const { colorMap, depthMap } = useTexture({ colorMap: colorImagePath, depthMap: depthImagePath });
 
   const aspect = useAspect(depthMap.image.width, depthMap.image.height, 1);
-  const delta = 0.01;
-  useFrame(
-    (state) => (depthMaterial.current.uMouse = [state.pointer.x * delta, state.pointer.y * delta])
-  );
+
+  const depthMaterial = useMouseMovementMaterial();
+
   return (
     <Plane args={aspect} scale={[10, 10, 10]}>
       {/* @ts-expect-error: ignore weird error caused by typescript */}
