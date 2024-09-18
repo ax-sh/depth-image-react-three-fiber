@@ -8,7 +8,7 @@ import {
 } from '@react-three/drei';
 import { Canvas, extend, useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
-import { useRef } from 'react';
+import { Suspense, useRef } from 'react';
 
 extend({
   Pseudo3DMaterial: shaderMaterial(
@@ -51,8 +51,11 @@ extend({
 
 function ImagePlane() {
   const depthMaterial = useRef<{ uMouse: number[] }>({ uMouse: [0, 0] });
-  const depthImagePath = '/image.webp';
-  const colorImagePath = '/color.jpg';
+  const { depthImagePath, colorImagePath } = useControls({
+    depthImagePath: '/image.webp',
+    colorImagePath: '/color.jpg',
+  });
+
   const { colorMap, depthMap } = useTexture({ colorMap: colorImagePath, depthMap: depthImagePath });
 
   const aspect = useAspect(depthMap.image.width, depthMap.image.height, 1);
@@ -69,15 +72,15 @@ function ImagePlane() {
 }
 
 function App() {
-  const { name, aNumber } = useControls({ name: 'World', aNumber: 0 });
-  console.log(name);
   return (
     <div className={'w-screen h-screen'}>
       <Canvas className={'h-full w-full'}>
-        <Bounds frustumCulled={true}>
-          <ImagePlane />
-        </Bounds>
-        <OrbitControls />
+        <Suspense fallback={null}>
+          <Bounds fit={true} frustumCulled={true}>
+            <ImagePlane />
+          </Bounds>
+          <OrbitControls />
+        </Suspense>
       </Canvas>
     </div>
   );
