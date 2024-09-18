@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 /public/image.webp
 /public/color.jpg
+/public/color.png
+/public/depth.png
