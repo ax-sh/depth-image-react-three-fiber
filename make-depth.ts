@@ -1,5 +1,9 @@
-import { DepthEstimationPipeline, RawImage, pipeline } from '@xenova/transformers';
-import { DepthEstimationPipelineOutput } from '@xenova/transformers/types/pipelines';
+import {
+  DepthEstimationPipeline,
+  DepthEstimationPipelineOutput,
+  RawImage,
+  pipeline,
+} from '@xenova/transformers';
 import * as process from 'node:process';
 
 async function run(imageFilePath: string) {
@@ -8,7 +12,7 @@ async function run(imageFilePath: string) {
     'Xenova/dpt-hybrid-midas'
   );
   const url = imageFilePath;
-  const out: DepthEstimationPipelineOutput = await depth_estimator(url);
+  const out = (await depth_estimator(url)) as DepthEstimationPipelineOutput;
 
   const depth = out.depth;
   const color = await RawImage.read(imageFilePath);
