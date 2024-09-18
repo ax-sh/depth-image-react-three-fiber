@@ -1,5 +1,6 @@
 import {
   Bounds,
+  Html,
   OrbitControls,
   Plane,
   shaderMaterial,
@@ -84,11 +85,15 @@ function ImagePlane() {
   );
 }
 
+function LoadingFallback() {
+  return <Html center>Loading...</Html>;
+}
+
 function App() {
   return (
     <div className={'w-screen h-screen'}>
       <Canvas className={'h-full w-full'} camera={{ fov: 35, zoom: 1.3, near: 1, far: 1000 }}>
-        <Suspense fallback={null}>
+        <Suspense fallback={<LoadingFallback />}>
           <Bounds fit clip observe margin={1.2}>
             <ImagePlane />
           </Bounds>
