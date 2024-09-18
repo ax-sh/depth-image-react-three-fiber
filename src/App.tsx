@@ -4,11 +4,12 @@ import {
   Plane,
   shaderMaterial,
   useAspect,
+  useBounds,
   useTexture,
 } from '@react-three/drei';
 import { Canvas, extend, useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
-import { Suspense, useRef } from 'react';
+import { Suspense, useEffect, useRef } from 'react';
 
 extend({
   Pseudo3DMaterial: shaderMaterial(
@@ -55,6 +56,10 @@ function ImagePlane() {
     depthImagePath: '/image.webp',
     colorImagePath: '/color.jpg',
   });
+  const bounds = useBounds();
+  useEffect(() => {
+    bounds.refresh().clip().fit();
+  }, []);
 
   const { colorMap, depthMap } = useTexture({ colorMap: colorImagePath, depthMap: depthImagePath });
 
@@ -64,7 +69,7 @@ function ImagePlane() {
     (state) => (depthMaterial.current.uMouse = [state.pointer.x * delta, state.pointer.y * delta])
   );
   return (
-    <Plane args={aspect}>
+    <Plane args={aspect} scale={[10, 10, 10]}>
       {/* @ts-expect-error: ignore weird error caused by typescript */}
       <pseudo3DMaterial ref={depthMaterial} uImage={colorMap} uDepthMap={depthMap} />
     </Plane>
@@ -74,9 +79,9 @@ function ImagePlane() {
 function App() {
   return (
     <div className={'w-screen h-screen'}>
-      <Canvas className={'h-full w-full'}>
+      <Canvas className={'h-full w-full'} camera={{ fov: 35, zoom: 1.3, near: 1, far: 1000 }}>
         <Suspense fallback={null}>
-          <Bounds fit={true} frustumCulled={true} margin={0}>
+          <Bounds fit clip observe margin={1.2}>
             <ImagePlane />
           </Bounds>
           <OrbitControls />
