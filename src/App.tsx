@@ -67,8 +67,8 @@ function useMouseMovementMaterial() {
 
 function ImagePlane() {
   const { depthImagePath, colorImagePath } = useControls({
-    depthImagePath: '/depth.png',
-    colorImagePath: '/color.png',
+    depthImagePath: './depth.png',
+    colorImagePath: './color.png',
   });
 
   const { colorMap, depthMap } = useTexture({ colorMap: colorImagePath, depthMap: depthImagePath });
