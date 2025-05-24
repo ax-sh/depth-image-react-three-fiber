@@ -7,7 +7,7 @@ import {
 } from "@react-three/drei";
 import { extend, useFrame } from "@react-three/fiber";
 import { useControls } from "leva";
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import * as THREE from "three";
 
 import { Pseudo3DMaterial } from "./pseudo3d-material.ts";
@@ -43,8 +43,13 @@ export function ImagePlane({ colorImageUrl, depthImageUrl }: ImagePlaneProps) {
     colorMap: colorImageUrl,
     depthMap: depthImageUrl,
   });
+  const bounds = useBounds();
 
   const aspect = useAspect(depthMap.image.width, depthMap.image.height, 1);
+  useLayoutEffect(() => {
+    // console.log(aspect, 333);
+    bounds.refresh().clip().fit();
+  }, [bounds]);
 
   const depthMaterial = useMouseMovementMaterial();
 
@@ -67,7 +72,7 @@ export function DepthImagePlane() {
     colorImagePath: "./test_color.png",
   });
   return (
-    <Bounds fit clip observe margin={1.2}>
+    <Bounds fit clip observe margin={2}>
       <ImagePlane
         colorImageUrl={colorImagePath}
         depthImageUrl={depthImagePath}
