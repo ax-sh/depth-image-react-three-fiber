@@ -69,7 +69,7 @@ export function ImagePlane({ colorImageUrl, depthImageUrl }: ImagePlaneProps) {
 
   return (
     <Plane args={aspect}>
-      {/* @ts-expect-error: ignore weird error caused by typescript */}
+      {/* @ts-expect-error: ignore unique error caused by typescript */}
       <pseudo3DMaterial ref={depthMaterial} uImage={colorMap} uDepthMap={depthMap} />
     </Plane>
   );

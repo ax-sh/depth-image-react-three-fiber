@@ -1,3 +1,4 @@
+import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { qrcode } from 'vite-plugin-qrcode';
@@ -6,6 +7,7 @@ import { qrcode } from 'vite-plugin-qrcode';
 export default defineConfig({
   plugins: [
     react(),
+    tailwindcss(),
     qrcode(), // only applies in dev mode
   ],
   server: { host: '0.0.0.0', port: 8000 },
