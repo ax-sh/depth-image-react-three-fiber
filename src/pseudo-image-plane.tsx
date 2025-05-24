@@ -63,8 +63,8 @@ export function ImagePlane({ colorImageUrl, depthImageUrl }: ImagePlaneProps) {
 
 export function DepthImagePlane() {
   const { depthImagePath, colorImagePath } = useControls({
-    depthImagePath: "./depth.png",
-    colorImagePath: "./color.png",
+    depthImagePath: "./test_depth.png",
+    colorImagePath: "./test_color.png",
   });
   return (
     <Bounds fit clip observe margin={1.2}>
