@@ -1,7 +1,15 @@
-import { Bounds, Plane, shaderMaterial, useAspect, useBounds, useTexture } from '@react-three/drei';
-import { extend, useFrame } from '@react-three/fiber';
-import { useControls } from 'leva';
-import { useEffect, useRef } from 'react';
+import {
+  Bounds,
+  Plane,
+  shaderMaterial,
+  useAspect,
+  useBounds,
+  useTexture,
+} from "@react-three/drei";
+import { extend, useFrame } from "@react-three/fiber";
+import { useControls } from "leva";
+import { useEffect, useRef } from "react";
+import * as THREE from "three";
 
 extend({
   Pseudo3DMaterial: shaderMaterial(
@@ -38,7 +46,7 @@ extend({
        vec4 original = texture2D(uImage, (vUv + parallax));
        gl_FragColor = linearTosRGB(original);
     }
-    `
+    `,
   ),
 });
 
@@ -51,7 +59,11 @@ function useMouseMovementMaterial() {
 
   const depthMaterial = useRef<{ uMouse: number[] }>({ uMouse: [0, 0] });
   useFrame(
-    (state) => (depthMaterial.current.uMouse = [state.pointer.x * delta, state.pointer.y * delta])
+    (state) =>
+      (depthMaterial.current.uMouse = [
+        state.pointer.x * delta,
+        state.pointer.y * delta,
+      ]),
   );
   return depthMaterial;
 }
@@ -61,7 +73,10 @@ type ImagePlaneProps = {
   depthImageUrl: string;
 };
 export function ImagePlane({ colorImageUrl, depthImageUrl }: ImagePlaneProps) {
-  const { colorMap, depthMap } = useTexture({ colorMap: colorImageUrl, depthMap: depthImageUrl });
+  const { colorMap, depthMap } = useTexture({
+    colorMap: colorImageUrl,
+    depthMap: depthImageUrl,
+  });
 
   const aspect = useAspect(depthMap.image.width, depthMap.image.height, 1);
 
@@ -70,19 +85,27 @@ export function ImagePlane({ colorImageUrl, depthImageUrl }: ImagePlaneProps) {
   return (
     <Plane args={aspect}>
       {/* @ts-expect-error: ignore unique error caused by typescript */}
-      <pseudo3DMaterial ref={depthMaterial} uImage={colorMap} uDepthMap={depthMap} />
+      <pseudo3DMaterial
+        ref={depthMaterial}
+        uImage={colorMap}
+        uDepthMap={depthMap}
+        side={THREE.DoubleSide}
+      />
     </Plane>
   );
 }
 
 export function DepthImagePlane() {
   const { depthImagePath, colorImagePath } = useControls({
-    depthImagePath: './depth.png',
-    colorImagePath: './color.png',
+    depthImagePath: "./depth.png",
+    colorImagePath: "./color.png",
   });
   return (
     <Bounds fit clip observe margin={1.2}>
-      <ImagePlane colorImageUrl={colorImagePath} depthImageUrl={depthImagePath} />
+      <ImagePlane
+        colorImageUrl={colorImagePath}
+        depthImageUrl={depthImagePath}
+      />
     </Bounds>
   );
 }
