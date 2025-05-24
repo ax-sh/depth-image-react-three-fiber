@@ -13,7 +13,7 @@ function Studio({ children }: PropsWithChildren) {
     <div className={"w-screen h-screen bg-black"}>
       <Canvas
         className={"h-full w-full"}
-        camera={{ fov: 35, zoom: 1.3, near: 1, far: 1000 }}
+        camera={{ fov: 3, zoom: 1.3, near: 0.1, far: 1000 }}
       >
         <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
       </Canvas>

@@ -25,11 +25,10 @@ function useMouseMovementMaterial() {
 
   const depthMaterial = useRef<{ uMouse: number[] }>({ uMouse: [0, 0] });
   useFrame(
-    (state) =>
-      (depthMaterial.current.uMouse = [
-        state.pointer.x * delta,
-        state.pointer.y * delta,
-      ]),
+    (state) => (depthMaterial.current.uMouse = [
+      state.pointer.x * delta,
+      state.pointer.y * delta,
+    ]),
   );
   return depthMaterial;
 }

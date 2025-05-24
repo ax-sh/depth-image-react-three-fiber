@@ -11,10 +11,10 @@ describe("depth map", async () => {
       imageFileUrl =
         "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png";
       imageFileUrl =
-        "https://i.pinimg.com/736x/05/d3/a6/05d3a6f81f97e985602efae3ff4f511f.jpg";
+        "https://images.unsplash.com/photo-1747901718105-bf9beb57ba3a?q=80&w=4287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
       const prediction = await predictDepthFromImage(imageFileUrl);
       if (Array.isArray(prediction)) {
-        return;
+        throw new Error("not supported");
       }
       const depth = prediction.depth;
       const color = await RawImage.read(imageFileUrl);
