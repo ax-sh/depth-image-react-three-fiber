@@ -1,7 +1,7 @@
-import { DepthEstimationPipeline, pipeline } from '@xenova/transformers';
-import { ImagePipelineInputs } from '@xenova/transformers/types/pipelines';
+import { DepthEstimationPipeline, pipeline } from "@xenova/transformers";
+import { ImagePipelineInputs } from "@xenova/transformers/types/pipelines";
 
-const DEPTH_ESTIMATION = 'depth-estimation' as const;
+const DEPTH_ESTIMATION = "depth-estimation" as const;
 
 class DepthEstimationService {
   private static instance: DepthEstimationService | null = null;
@@ -23,7 +23,7 @@ class DepthEstimationService {
     if (!this.instance) {
       const predictor = await pipeline<typeof DEPTH_ESTIMATION>(
         DEPTH_ESTIMATION,
-        'Xenova/dpt-hybrid-midas'
+        "Xenova/dpt-hybrid-midas",
       );
       this.instance = new DepthEstimationService(predictor);
     }
