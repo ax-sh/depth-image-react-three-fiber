@@ -1,8 +1,9 @@
-import { RawImage } from '@xenova/transformers';
-import { useLayoutEffect, useState } from 'react';
+import { RawImage } from "@xenova/transformers";
+import { useLayoutEffect, useState } from "react";
 
-import { getPredictor } from './depth-estimation-predictor.ts';
-import { useAppStore } from './store.ts';
+import { getPredictor } from "./depth-estimation-predictor.ts";
+import { StatusEvent, useAppStore } from "./store.ts";
+import useWebWorker from "./use-web-worker.ts";
 
 async function makeDepthMap(file: File, progress_callback: CallableFunction) {
   const color = await RawImage.fromBlob(file);
@@ -13,7 +14,7 @@ async function makeDepthMap(file: File, progress_callback: CallableFunction) {
 
   const prediction = await predictor(color);
   if (Array.isArray(prediction)) {
-    throw new Error('not supported');
+    throw new Error("not supported");
   }
   const depth = prediction.depth;
   const colorImage = URL.createObjectURL(await color.toBlob());
@@ -21,38 +22,32 @@ async function makeDepthMap(file: File, progress_callback: CallableFunction) {
   return { colorImage, depthImage };
 }
 
-type Status = 'initiate' | 'download' | 'progress' | 'done' | 'ready';
-
 export function useDepthProcessor(files: File[]) {
   const [state, setState] = useState<{
     colorImage: string;
     depthImage: string;
   }>({
-    colorImage: '',
-    depthImage: '',
+    colorImage: "",
+    depthImage: "",
   });
 
   const setStatus = useAppStore((state) => state.setStatus);
+  const { run, loading } = useWebWorker(makeDepthMap);
+  console.log(loading, "333");
 
   useLayoutEffect(() => {
     const [file] = files;
     if (!file) return;
-    makeDepthMap(
-      file,
-      (event: { status: Status; total?: number; loaded?: number; progress?: number }) => {
-        setStatus(event);
-        switch (event.status) {
-          case 'initiate':
-            return console.log(event);
-          case 'progress':
-            return console.log(event.progress, event.total, event.loaded);
-          default:
-            console.log('Mever', event);
-        }
-      }
-    ).then(({ colorImage, depthImage }) => {
-      setState({ colorImage, depthImage });
-    });
-  }, [files, setStatus]);
+    const a = run(file);
+    // console.log(a, 'ddddd');
+    async function Moo() {
+      makeDepthMap(file, (event: StatusEvent) => setStatus(event)).then(
+        ({ colorImage, depthImage }) => {
+          setState({ colorImage, depthImage });
+        },
+      );
+    }
+    Moo();
+  }, [files, setStatus, run]);
   return { state };
 }
