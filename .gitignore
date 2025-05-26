@@ -26,3 +26,4 @@ dist-ssr
 /public/color.jpg
 /public/color.png
 /public/depth.png
+*.tsbuildinfo
