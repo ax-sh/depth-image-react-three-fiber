@@ -2,6 +2,7 @@ import { RawImage } from '@xenova/transformers';
 import { useLayoutEffect, useState } from 'react';
 
 import { getPredictor } from './depth-estimation-predictor.ts';
+import { StatusEvent, useAppStore } from './store.ts';
 
 type ImagePaths = {
   colorImage: string;
@@ -36,26 +37,15 @@ export function useDepthProcessor(files: File[]) {
     const [file] = files;
     if (!file) return;
 
-    const instance = new ComlinkWorker<typeof import('../worker')>(
-      new URL('../worker', import.meta.url),
-      {
-        name: 'calculationsComLink',
-        type: 'module',
-        /* normal Worker options*/
-      }
-    );
-    const result = instance.run(makeDepthMap, file);
-    result.then((x) => console.log(x));
+    async function run() {
+      const { colorImage, depthImage } = await makeDepthMap(file, (event: StatusEvent) =>
+        // setStatus(event)
+        useAppStore.getState().setStatus(event)
+      );
 
-    // async function run() {
-    //   const { colorImage, depthImage } = await makeDepthMap(file, (event: StatusEvent) =>
-    //     // setStatus(event)
-    //     useAppStore.getState().setStatus(event)
-    //   );
-    //
-    //   setState({ colorImage, depthImage });
-    // }
-    // void run();
+      setState({ colorImage, depthImage });
+    }
+    void run();
   }, [files]);
   return { state };
 }

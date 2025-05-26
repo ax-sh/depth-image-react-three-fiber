@@ -4,7 +4,8 @@ import { useControls } from 'leva';
 import { memo, useRef } from 'react';
 import * as THREE from 'three';
 
-import { useDepthProcessor } from './hooks/use-depth-processor.ts';
+// import { useDepthProcessor } from './hooks/use-depth-processor.ts';
+import { useDepthQuery } from './hooks/use-depth-query.ts';
 import { ImagePlaneProps } from './image-depth-plane.tsx';
 import { Pseudo3DMaterial } from './pseudo3d-material.ts';
 
@@ -64,7 +65,11 @@ function FallbackImagePlane() {
 }
 
 export function DepthImagePlane({ files }: { files: File[] }) {
-  const { state } = useDepthProcessor(files);
+  // const { state } = useDepthProcessor(files);
+  const { data, isLoading } = useDepthQuery(files?.[0]);
+  if (isLoading) return;
+  if (!data) return;
+  const state = data;
 
   return (
     <Bounds fit clip observe margin={2} maxDuration={0}>
