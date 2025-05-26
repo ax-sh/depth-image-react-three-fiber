@@ -2,7 +2,7 @@ import { DepthEstimationPipeline, pipeline } from "@xenova/transformers";
 import { ImagePipelineInputs } from "@xenova/transformers/types/pipelines";
 
 const DEPTH_ESTIMATION = "depth-estimation" as const;
-async function getPredictor(): Promise<DepthEstimationPipeline> {
+export async function getPredictor(): Promise<DepthEstimationPipeline> {
   return pipeline<typeof DEPTH_ESTIMATION>(
     DEPTH_ESTIMATION,
     "Xenova/dpt-hybrid-midas",
