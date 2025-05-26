@@ -1,4 +1,5 @@
 import { RawImage } from "@xenova/transformers";
+import fs from "fs";
 
 import {
   getPredictor,
@@ -8,9 +9,17 @@ import {
 describe("depth map", async () => {
   it("should load model", async () => {
     const predictor = await getPredictor();
-    const file = await RawImage.fromURL("./public/test_color.png");
+    const localImageFilePath = "./public/test_color.png";
+    const imageBuffer = fs.readFileSync(localImageFilePath);
+    console.log(imageBuffer);
+    const blob = new Blob([imageBuffer], { type: "image/png" });
+    // const file = new File([imageBuffer], { type: 'image/png' });
+    // localImageFilePath;
+
+    const file = await RawImage.fromBlob(blob);
+    // console.log(file);
     const prediction = await predictor(file);
-    console.log(prediction);
+    // console.log(prediction);
   });
   it("should make depth map from url blob", async () => {
     // const depth_estimator = await fetchDepthEstimationPipeline();

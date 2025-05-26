@@ -6,8 +6,14 @@ export default defineConfig({
     // name: 'happy-dom',
     // root: "./shared_tests",
     // environment: "node",
-    environment: 'jsdom',
-    // environment: 'happy-dom',
+    // environment: 'jsdom',
+    environment: 'happy-dom',
+    browser: {
+      enabled: false,
+      name: 'chromium',
+      provider: 'playwright',
+    },
+
     // setupFiles: ['./setup.happy-dom.ts'],:
   },
 });
