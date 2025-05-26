@@ -1,9 +1,9 @@
-import { RawImage } from "@xenova/transformers";
-import { useLayoutEffect, useState } from "react";
+import { RawImage } from '@xenova/transformers';
+import { useLayoutEffect, useState } from 'react';
 
-import { getPredictor } from "./depth-estimation-predictor.ts";
-import { StatusEvent, useAppStore } from "./store.ts";
-import useWebWorker from "./use-web-worker.ts";
+import { getPredictor } from './depth-estimation-predictor.ts';
+import { StatusEvent, useAppStore } from './store.ts';
+import useWebWorker from './use-web-worker.ts';
 
 async function makeDepthMap(file: File, progress_callback: CallableFunction) {
   const color = await RawImage.fromBlob(file);
@@ -14,7 +14,7 @@ async function makeDepthMap(file: File, progress_callback: CallableFunction) {
 
   const prediction = await predictor(color);
   if (Array.isArray(prediction)) {
-    throw new Error("not supported");
+    throw new Error('not supported');
   }
   const depth = prediction.depth;
   const colorImage = URL.createObjectURL(await color.toBlob());
@@ -27,13 +27,13 @@ export function useDepthProcessor(files: File[]) {
     colorImage: string;
     depthImage: string;
   }>({
-    colorImage: "",
-    depthImage: "",
+    colorImage: '',
+    depthImage: '',
   });
 
   const setStatus = useAppStore((state) => state.setStatus);
-  const { run, loading } = useWebWorker(makeDepthMap);
-  console.log(loading, "333");
+  const { run, loading, result } = useWebWorker(makeDepthMap);
+  console.log(loading, result, '333');
 
   useLayoutEffect(() => {
     const [file] = files;
@@ -44,7 +44,7 @@ export function useDepthProcessor(files: File[]) {
       makeDepthMap(file, (event: StatusEvent) => setStatus(event)).then(
         ({ colorImage, depthImage }) => {
           setState({ colorImage, depthImage });
-        },
+        }
       );
     }
     Moo();
