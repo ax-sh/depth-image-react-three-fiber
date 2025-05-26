@@ -2,7 +2,11 @@ import { RawImage } from '@xenova/transformers';
 import { useLayoutEffect, useState } from 'react';
 
 import { getPredictor } from './depth-estimation-predictor.ts';
-import { StatusEvent, useAppStore } from './store.ts';
+
+type ImagePaths = {
+  colorImage: string;
+  depthImage: string;
+};
 
 async function makeDepthMap(file: File, progress_callback: CallableFunction) {
   const color = await RawImage.fromBlob(file);
@@ -24,27 +28,34 @@ async function makeDepthMap(file: File, progress_callback: CallableFunction) {
   return { colorImage, depthImage };
 }
 
-type ImagePaths = {
-  colorImage: string;
-  depthImage: string;
-};
-
 export function useDepthProcessor(files: File[]) {
   const [state, setState] = useState<ImagePaths>({} as ImagePaths);
-  const worker = useDepthWorker();
+  // const worker = useDepthWorker();
 
   useLayoutEffect(() => {
     const [file] = files;
     if (!file) return;
-    worker.run(file);
 
-    async function run() {
-      const { colorImage, depthImage } = await makeDepthMap(file, (event: StatusEvent) =>
-        setStatus(event)
-      );
-      setState({ colorImage, depthImage });
-    }
-    void run();
-  }, [files, setStatus]);
+    const instance = new ComlinkWorker<typeof import('../worker')>(
+      new URL('../worker', import.meta.url),
+      {
+        name: 'calculationsComLink',
+        type: 'module',
+        /* normal Worker options*/
+      }
+    );
+    const result = instance.run(makeDepthMap, file);
+    result.then((x) => console.log(x));
+
+    // async function run() {
+    //   const { colorImage, depthImage } = await makeDepthMap(file, (event: StatusEvent) =>
+    //     // setStatus(event)
+    //     useAppStore.getState().setStatus(event)
+    //   );
+    //
+    //   setState({ colorImage, depthImage });
+    // }
+    // void run();
+  }, [files]);
   return { state };
 }
