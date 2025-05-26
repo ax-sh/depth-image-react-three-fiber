@@ -1,7 +1,7 @@
-import { RawImage } from "@xenova/transformers";
-import { useLayoutEffect, useRef, useState } from "react";
+import { RawImage } from '@xenova/transformers';
+import { useLayoutEffect, useRef, useState } from 'react';
 
-import { getPredictor } from "./depth-estimation-predictor.ts";
+import { getPredictor } from './depth-estimation-predictor.ts';
 
 async function makeDepthMap(file: File, progress_callback: CallableFunction) {
   const color = await RawImage.fromBlob(file);
@@ -12,7 +12,7 @@ async function makeDepthMap(file: File, progress_callback: CallableFunction) {
 
   const prediction = await predictor(color);
   if (Array.isArray(prediction)) {
-    throw new Error("not supported");
+    throw new Error('not supported');
   }
   const depth = prediction.depth;
   const colorImage = URL.createObjectURL(await color.toBlob());
@@ -20,22 +20,35 @@ async function makeDepthMap(file: File, progress_callback: CallableFunction) {
   return { colorImage, depthImage };
 }
 
+type Status = 'initiate' | 'download' | 'progress' | 'done' | 'ready';
+
 export function useDepthProcessor(files: File[]) {
   const [state, setState] = useState<{
     colorImage: string;
     depthImage: string;
   }>({
-    colorImage: "",
-    depthImage: "",
+    colorImage: '',
+    depthImage: '',
   });
   const eventRef = useRef<unknown>({});
 
   useLayoutEffect(() => {
     const [file] = files;
     if (!file) return;
-    makeDepthMap(file, (event: unknown) => {
-      eventRef.current = event;
-    }).then(({ colorImage, depthImage }) => {
+    makeDepthMap(
+      file,
+      (event: { status: Status; total?: number; loaded?: number; progress?: number }) => {
+        eventRef.current = event;
+        switch (event.status) {
+          case 'initiate':
+            return console.log(event);
+          case 'progress':
+            return console.log(event.progress, event.total, event.loaded);
+          default:
+            console.log('Mever', event);
+        }
+      }
+    ).then(({ colorImage, depthImage }) => {
       setState({ colorImage, depthImage });
     });
   }, [files]);
@@ -49,8 +62,8 @@ function useDepthProcessingWorker() {
   // We use the `useEffect` hook to set up the worker as soon as the `App` component is mounted.
   useLayoutEffect(() => {
     // Create the worker if it does not yet exist.
-    worker.current ??= new Worker(new URL("./worker.js", import.meta.url), {
-      type: "module",
+    worker.current ??= new Worker(new URL('./worker.js', import.meta.url), {
+      type: 'module',
     });
 
     // Create a callback function for messages from the worker thread.
@@ -59,11 +72,10 @@ function useDepthProcessingWorker() {
     };
 
     // Attach the callback function as an event listener.
-    worker.current.addEventListener("message", onMessageReceived);
+    worker.current.addEventListener('message', onMessageReceived);
 
     // Define a cleanup function for when the component is unmounted.
-    return () =>
-      worker.current?.removeEventListener("message", onMessageReceived);
+    return () => worker.current?.removeEventListener('message', onMessageReceived);
   });
   // console.log(worker.current., 3333);
 }
