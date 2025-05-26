@@ -2,6 +2,7 @@ import { RawImage } from '@xenova/transformers';
 import { useLayoutEffect, useRef, useState } from 'react';
 
 import { getPredictor } from './depth-estimation-predictor.ts';
+import { useAppStore } from './store.ts';
 
 async function makeDepthMap(file: File, progress_callback: CallableFunction) {
   const color = await RawImage.fromBlob(file);
@@ -30,7 +31,8 @@ export function useDepthProcessor(files: File[]) {
     colorImage: '',
     depthImage: '',
   });
-  const eventRef = useRef<unknown>({});
+
+  const setStatus = useAppStore((state) => state.setStatus);
 
   useLayoutEffect(() => {
     const [file] = files;
@@ -38,7 +40,7 @@ export function useDepthProcessor(files: File[]) {
     makeDepthMap(
       file,
       (event: { status: Status; total?: number; loaded?: number; progress?: number }) => {
-        eventRef.current = event;
+        setStatus(event);
         switch (event.status) {
           case 'initiate':
             return console.log(event);
@@ -51,15 +53,24 @@ export function useDepthProcessor(files: File[]) {
     ).then(({ colorImage, depthImage }) => {
       setState({ colorImage, depthImage });
     });
-  }, [files]);
-  return { state, eventRef };
+  }, [files, setStatus]);
+  return { state };
 }
-
-function useDepthProcessingWorker() {
+//
+export function useDepthProcessingWorker() {
   // Create a reference to the worker object.
   const worker = useRef<Worker | null>(null);
-
-  // We use the `useEffect` hook to set up the worker as soon as the `App` component is mounted.
+  //   const [ready, setReady] = useState(null);
+  //   const [disabled, setDisabled] = useState(false);
+  //   const [progressItems, setProgressItems] = useState([]);
+  //
+  //   // Inputs and outputs
+  //   const [input, setInput] = useState('I love walking my dog.');
+  //   const [sourceLanguage, setSourceLanguage] = useState('eng_Latn');
+  //   const [targetLanguage, setTargetLanguage] = useState('fra_Latn');
+  //   const [output, setOutput] = useState('');
+  //
+  //   // We use the `useEffect` hook to set up the worker as soon as the `App` component is mounted.
   useLayoutEffect(() => {
     // Create the worker if it does not yet exist.
     worker.current ??= new Worker(new URL('./worker.js', import.meta.url), {
@@ -67,15 +78,53 @@ function useDepthProcessingWorker() {
     });
 
     // Create a callback function for messages from the worker thread.
-    const onMessageReceived = (e) => {
-      // TODO: Will fill in later
+    const onMessageReceived = (e: unknown) => {
+      //       switch (e.data.status) {
+      //         case 'initiate':
+      //           // Model file start load: add a new progress item to the list.
+      //           // setReady(false);
+      //           // setProgressItems(prev => [...prev, e.data]);
+      //           break;
+      //
+      //         case 'progress':
+      //           // Model file progress: update one of the progress items.
+      //           setProgressItems((prev) =>
+      //             prev.map((item) => {
+      //               if (item.file === e.data.file) {
+      //                 return { ...item, progress: e.data.progress };
+      //               }
+      //               return item;
+      //             })
+      //           );
+      //           break;
+      //
+      //         case 'done':
+      //           // Model file loaded: remove the progress item from the list.
+      //           setProgressItems((prev) => prev.filter((item) => item.file !== e.data.file));
+      //           break;
+      //
+      //         case 'ready':
+      //           // Pipeline ready: the worker is ready to accept messages.
+      //           setReady(true);
+      //           break;
+      //
+      //         case 'update':
+      //           // Generation update: update the output text.
+      //           setOutput((o) => o + e.data.output);
+      //           break;
+      //
+      //         case 'complete':
+      //           // Generation complete: re-enable the "Translate" button
+      //           setDisabled(false);
+      //           break;
+      //       }
     };
-
+    //
     // Attach the callback function as an event listener.
     worker.current.addEventListener('message', onMessageReceived);
-
-    // Define a cleanup function for when the component is unmounted.
+    //
+    //     // Define a cleanup function for when the component is unmounted.
     return () => worker.current?.removeEventListener('message', onMessageReceived);
   });
-  // console.log(worker.current., 3333);
+  //   // console.log(worker.current., 3333);
 }

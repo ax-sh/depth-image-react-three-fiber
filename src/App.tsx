@@ -2,6 +2,7 @@ import { Html, OrbitControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { type PropsWithChildren, Suspense } from 'react';
 
+import { useAppStore } from './hooks/store.ts';
 import { useImageFileDropZone } from './hooks/use-image-file-drop-zone.ts';
 import { DepthImagePlane } from './pseudo-image-plane.tsx';
 
@@ -31,6 +32,7 @@ function DragInfo({ children }: PropsWithChildren) {
 
 function App() {
   const { files, getRootProps, isDragActive } = useImageFileDropZone();
+  const status = useAppStore((state) => state.status);
 
   return (
     <main className={'w-screen h-screen bg-black relative'} {...getRootProps()}>
@@ -38,10 +40,9 @@ function App() {
         <DepthImagePlane files={files} />
         <OrbitControls />
       </Studio>
-      <div
-        id={'status'}
-        className={'absolute top-0 left-0 w-full h-full pointer-events-none'}
-      ></div>
+      <div id={'status'} className={'absolute top-0 left-0 w-full h-full pointer-events-none'}>
+        {JSON.stringify(status)}
+      </div>
 
       {isDragActive ? <DragInfo>Drop the files here ...</DragInfo> : null}
     </main>
