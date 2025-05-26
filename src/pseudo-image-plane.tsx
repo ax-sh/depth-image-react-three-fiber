@@ -34,13 +34,13 @@ export const ImagePlane = memo(({ colorImageUrl, depthImageUrl }: ImagePlaneProp
     colorMap: colorImageUrl,
     depthMap: depthImageUrl,
   });
-  // const bounds = useBounds();
+  const bounds = useBounds();
 
   const aspect = useAspect(depthMap.image.width, depthMap.image.height, 1);
-  // useLayoutEffect(() => {
-  //   // console.log(aspect, 333);
-  //   bounds.refresh().clip().fit();
-  // }, [bounds]);
+  useLayoutEffect(() => {
+    // console.log(aspect, 333);
+    bounds.refresh().clip().fit();
+  }, [bounds]);
 
   const depthMaterial = useMouseMovementMaterial();
 
@@ -57,22 +57,27 @@ export const ImagePlane = memo(({ colorImageUrl, depthImageUrl }: ImagePlaneProp
   );
 });
 
+function FallbackImagePlane() {
+  const { depthImagePath, colorImagePath } = useControls({
+    depthImagePath: './test_depth.png',
+    colorImagePath: './test_color.png',
+  });
+
+  // Optional: Add a log to see when this specific part re-renders
+  console.log('FallbackImagePlane re-rendered due to useControls change.');
+
+  return <ImagePlane colorImageUrl={colorImagePath} depthImageUrl={depthImagePath} />;
+}
+
 export function DepthImagePlane({ files }: { files: File[] }) {
-  const { depthImagePath, colorImagePath } = useControls(
-    {
-      depthImagePath: './test_depth.png',
-      colorImagePath: './test_color.png',
-    },
-    []
-  );
   const { state } = useDepthProcessor(files);
 
   return (
     <Bounds fit clip observe margin={2}>
-      {[state.colorImage, state.depthImage].every(Boolean) ? (
+      {[files.length > 0, state.colorImage, state.depthImage].every(Boolean) ? (
         <ImagePlane colorImageUrl={state.colorImage} depthImageUrl={state.depthImage} />
       ) : (
-        <ImagePlane colorImageUrl={colorImagePath} depthImageUrl={depthImagePath} />
+        <FallbackImagePlane />
       )}
     </Bounds>
   );
