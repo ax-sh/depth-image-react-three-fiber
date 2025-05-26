@@ -1,5 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
+// import * as Comlink from 'comlink';
+//
+// import { useAppStore } from './store.ts';
+
 const depthWorker = new ComlinkWorker<typeof import('./worker')>(
   new URL('./worker', import.meta.url),
   {
@@ -8,6 +12,15 @@ const depthWorker = new ComlinkWorker<typeof import('./worker')>(
     /* normal Worker options*/
   }
 );
+
+// // Expose an API for the worker to call
+// const mainThreadAPI = {
+//   updateZustandState: (newStatus: unknown) => {
+//     useAppStore.getState().setStatus(newStatus);
+//   },
+// };
+//
+// Comlink.expose(mainThreadAPI, depthWorker.);
 
 export function useDepthQuery(file: File | null) {
   return useQuery({
