@@ -31,12 +31,12 @@ type ImagePaths = {
 
 export function useDepthProcessor(files: File[]) {
   const [state, setState] = useState<ImagePaths>({} as ImagePaths);
-
-  const setStatus = useAppStore((state) => state.setStatus);
+  const worker = useDepthWorker();
 
   useLayoutEffect(() => {
     const [file] = files;
     if (!file) return;
+    worker.run(file);
 
     async function run() {
       const { colorImage, depthImage } = await makeDepthMap(file, (event: StatusEvent) =>

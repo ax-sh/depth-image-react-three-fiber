@@ -1,15 +1,14 @@
-import { Bounds, Plane, useAspect, useBounds, useTexture } from '@react-three/drei';
+import { Bounds, Plane, useAspect, useTexture } from '@react-three/drei';
 import { extend, useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
-import { memo, useEffect, useLayoutEffect, useRef } from 'react';
+import { memo, useRef } from 'react';
 import * as THREE from 'three';
 
 import { useDepthProcessor } from './hooks/use-depth-processor.ts';
+import { ImagePlaneProps } from './image-depth-plane.tsx';
 import { Pseudo3DMaterial } from './pseudo3d-material.ts';
 
-extend({
-  Pseudo3DMaterial,
-});
+extend({ Pseudo3DMaterial });
 
 function useMouseMovementMaterial() {
   // const bounds = useBounds();
@@ -25,10 +24,6 @@ function useMouseMovementMaterial() {
   return depthMaterial;
 }
 
-type ImagePlaneProps = {
-  colorImageUrl: string;
-  depthImageUrl: string;
-};
 export const ImagePlane = memo(({ colorImageUrl, depthImageUrl }: ImagePlaneProps) => {
   const { colorMap, depthMap } = useTexture({
     colorMap: colorImageUrl,
@@ -65,14 +60,6 @@ const defaultImagePaths = {
 function FallbackImagePlane() {
   const { depthImagePath, colorImagePath } = useControls(defaultImagePaths);
 
-  // Optional: Add a log to see when this specific part re-renders
-  console.log('FallbackImagePlane re-rendered due to useControls change.');
-  return (
-    <Plane>
-      <meshBasicMaterial color='white' />
-    </Plane>
-  );
-
   return <ImagePlane colorImageUrl={colorImagePath} depthImageUrl={depthImagePath} />;
 }
 
@@ -81,6 +68,7 @@ export function DepthImagePlane({ files }: { files: File[] }) {
 
   return (
     <Bounds fit clip observe margin={2} maxDuration={0}>
+      {/*<ambientLight intensity={0.5} />*/}
       {[files.length > 0, state.colorImage, state.depthImage].every(Boolean) ? (
         <ImagePlane colorImageUrl={state.colorImage} depthImageUrl={state.depthImage} />
       ) : (
