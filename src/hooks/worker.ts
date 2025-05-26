@@ -1,8 +1,12 @@
 import { DepthEstimationPipeline, RawImage, env, pipeline } from '@xenova/transformers';
 
-import { StatusEvent, useAppStore } from './hooks/store.ts';
+import { StatusEvent, useAppStore } from './store.ts';
 
 env.allowLocalModels = true;
+// fixme temp fix need better solution
+const BASE_URL = 'http://192.168.1.83:8000/depth-image-react-three-fiber/public/models/';
+env.localModelPath = BASE_URL;
+// env.localModelPath = './depth-image-react-three-fiber/models';
 
 const DEPTH_ESTIMATION = 'depth-estimation' as const;
 class DepthPredictPipeline {

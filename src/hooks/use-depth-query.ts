@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
-const depthWorker = new ComlinkWorker<typeof import('../worker')>(
-  new URL('../worker', import.meta.url),
+const depthWorker = new ComlinkWorker<typeof import('./worker')>(
+  new URL('./worker', import.meta.url),
   {
     name: 'calculationsComLink',
     type: 'module',
