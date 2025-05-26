@@ -3,7 +3,6 @@ import { useLayoutEffect, useState } from 'react';
 
 import { getPredictor } from './depth-estimation-predictor.ts';
 import { StatusEvent, useAppStore } from './store.ts';
-import useWebWorker from './use-web-worker.ts';
 
 async function makeDepthMap(file: File, progress_callback: CallableFunction) {
   const color = await RawImage.fromBlob(file);
@@ -17,8 +16,11 @@ async function makeDepthMap(file: File, progress_callback: CallableFunction) {
     throw new Error('not supported');
   }
   const depth = prediction.depth;
-  const colorImage = URL.createObjectURL(await color.toBlob());
-  const depthImage = URL.createObjectURL(await depth.toBlob());
+  const colorBlob = await color.toBlob();
+  const depthBlob = await depth.toBlob();
+  const colorImage = URL.createObjectURL(colorBlob);
+
+  const depthImage = URL.createObjectURL(depthBlob);
   return { colorImage, depthImage };
 }
 

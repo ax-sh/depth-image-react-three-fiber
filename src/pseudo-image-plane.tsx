@@ -12,10 +12,10 @@ extend({
 });
 
 function useMouseMovementMaterial() {
-  const bounds = useBounds();
-  useEffect(() => {
-    bounds.refresh().clip().fit();
-  }, [bounds]);
+  // const bounds = useBounds();
+  // useEffect(() => {
+  //   bounds.refresh().clip().fit();
+  // }, [bounds]);
   const delta = 0.01;
 
   const depthMaterial = useRef<{ uMouse: number[] }>({ uMouse: [0, 0] });
@@ -34,13 +34,13 @@ export const ImagePlane = memo(({ colorImageUrl, depthImageUrl }: ImagePlaneProp
     colorMap: colorImageUrl,
     depthMap: depthImageUrl,
   });
-  const bounds = useBounds();
+  // const bounds = useBounds();
 
   const aspect = useAspect(depthMap.image.width, depthMap.image.height, 1);
-  useLayoutEffect(() => {
-    // console.log(aspect, 333);
-    bounds.refresh().clip().fit();
-  }, [bounds]);
+  // useLayoutEffect(() => {
+  //   // console.log(aspect, 333);
+  //   bounds.refresh().clip().fit();
+  // }, [bounds]);
 
   const depthMaterial = useMouseMovementMaterial();
 
@@ -73,7 +73,7 @@ export function DepthImagePlane({ files }: { files: File[] }) {
   const { state } = useDepthProcessor(files);
 
   return (
-    <Bounds fit clip observe margin={2}>
+    <Bounds fit clip observe margin={2} maxDuration={0}>
       {[files.length > 0, state.colorImage, state.depthImage].every(Boolean) ? (
         <ImagePlane colorImageUrl={state.colorImage} depthImageUrl={state.depthImage} />
       ) : (
