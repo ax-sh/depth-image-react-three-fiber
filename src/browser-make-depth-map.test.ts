@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { RawImage } from "@xenova/transformers";
 import fs from "fs";
 
