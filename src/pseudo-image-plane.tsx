@@ -57,14 +57,21 @@ export const ImagePlane = memo(({ colorImageUrl, depthImageUrl }: ImagePlaneProp
   );
 });
 
+const defaultImagePaths = {
+  colorImagePath: './test_color.png',
+  depthImagePath: './test_depth.png',
+};
+
 function FallbackImagePlane() {
-  const { depthImagePath, colorImagePath } = useControls({
-    depthImagePath: './test_depth.png',
-    colorImagePath: './test_color.png',
-  });
+  const { depthImagePath, colorImagePath } = useControls(defaultImagePaths);
 
   // Optional: Add a log to see when this specific part re-renders
   console.log('FallbackImagePlane re-rendered due to useControls change.');
+  return (
+    <Plane>
+      <meshBasicMaterial color='white' />
+    </Plane>
+  );
 
   return <ImagePlane colorImageUrl={colorImagePath} depthImageUrl={depthImagePath} />;
 }
