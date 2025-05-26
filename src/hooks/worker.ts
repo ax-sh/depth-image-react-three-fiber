@@ -1,12 +1,6 @@
 import { DepthEstimationPipeline, RawImage, env, pipeline } from '@xenova/transformers';
-import * as Comlink from 'comlink';
 
 import { StatusEvent, useAppStore } from './store.ts';
-
-// Wrap the parent endpoint to access the main thread's API
-const mainAPI = Comlink.wrap<{
-  updateZustandState: (state: { count: number }) => Promise<void>;
-}>(Comlink.parentEndpoint);
 
 env.allowLocalModels = true;
 // fixme temp fix need better solution
