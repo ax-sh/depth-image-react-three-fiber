@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
@@ -7,13 +7,12 @@ export default defineConfig({
     // root: "./shared_tests",
     // environment: "node",
     // environment: 'jsdom',
-    environment: 'happy-dom',
+    environment: "happy-dom",
     browser: {
       enabled: false,
-      name: 'chromium',
-      provider: 'playwright',
+      name: "chromium",
+      provider: "playwright",
     },
-
     // setupFiles: ['./setup.happy-dom.ts'],:
   },
 });

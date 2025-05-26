@@ -3,6 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import { PropsWithChildren, Suspense } from "react";
 
 import { DepthImagePlane } from "./pseudo-image-plane.tsx";
+import { useImageFileDropZone } from "./use-image-file-drop-zone.ts";
 
 function LoadingFallback() {
   return <Html center>Loading...</Html>;
@@ -10,23 +11,38 @@ function LoadingFallback() {
 
 function Studio({ children }: PropsWithChildren) {
   return (
-    <div className={"w-screen h-screen bg-black"}>
-      <Canvas
-        className={"h-full w-full"}
-        camera={{ fov: 3, zoom: 1.3, near: 0.1, far: 1000 }}
-      >
-        <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
-      </Canvas>
-    </div>
+    <Canvas
+      className={"h-full w-full"}
+      camera={{ fov: 3, zoom: 1.3, near: 0.1, far: 1000 }}
+    >
+      <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
+    </Canvas>
+  );
+}
+
+function DragInfo({ children }: PropsWithChildren) {
+  return (
+    <section
+      className={
+        "absolute top-0 left-0 w-full h-full pointer-events-none grid place-items-center  bg-black/50"
+      }
+    >
+      {children}
+    </section>
   );
 }
 
 function App() {
+  const { files, getRootProps, isDragActive } = useImageFileDropZone();
   return (
-    <Studio>
-      <DepthImagePlane />
-      <OrbitControls />
-    </Studio>
+    <main className={"w-screen h-screen bg-black relative"} {...getRootProps()}>
+      <Studio>
+        <DepthImagePlane files={files} />
+        <OrbitControls />
+      </Studio>
+
+      {isDragActive ? <DragInfo>Drop the files here ...</DragInfo> : null}
+    </main>
   );
 }
 
