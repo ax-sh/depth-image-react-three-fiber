@@ -22,32 +22,27 @@ async function makeDepthMap(file: File, progress_callback: CallableFunction) {
   return { colorImage, depthImage };
 }
 
+type ImagePaths = {
+  colorImage: string;
+  depthImage: string;
+};
+
 export function useDepthProcessor(files: File[]) {
-  const [state, setState] = useState<{
-    colorImage: string;
-    depthImage: string;
-  }>({
-    colorImage: '',
-    depthImage: '',
-  });
+  const [state, setState] = useState<ImagePaths>({} as ImagePaths);
 
   const setStatus = useAppStore((state) => state.setStatus);
-  const { run, loading, result } = useWebWorker(makeDepthMap);
-  console.log(loading, result, '333');
 
   useLayoutEffect(() => {
     const [file] = files;
     if (!file) return;
-    const a = run(file);
-    // console.log(a, 'ddddd');
-    async function Moo() {
-      makeDepthMap(file, (event: StatusEvent) => setStatus(event)).then(
-        ({ colorImage, depthImage }) => {
-          setState({ colorImage, depthImage });
-        }
+
+    async function run() {
+      const { colorImage, depthImage } = await makeDepthMap(file, (event: StatusEvent) =>
+        setStatus(event)
       );
+      setState({ colorImage, depthImage });
     }
-    Moo();
-  }, [files, setStatus, run]);
+    void run();
+  }, [files, setStatus]);
   return { state };
 }
