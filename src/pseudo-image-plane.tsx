@@ -1,7 +1,7 @@
 import { Bounds, Plane, useAspect, useBounds, useTexture } from '@react-three/drei';
 import { extend, useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { memo, useEffect, useLayoutEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 import { useDepthProcessor } from './hooks/use-depth-processor.ts';
@@ -29,7 +29,7 @@ type ImagePlaneProps = {
   colorImageUrl: string;
   depthImageUrl: string;
 };
-export function ImagePlane({ colorImageUrl, depthImageUrl }: ImagePlaneProps) {
+export const ImagePlane = memo(({ colorImageUrl, depthImageUrl }: ImagePlaneProps) => {
   const { colorMap, depthMap } = useTexture({
     colorMap: colorImageUrl,
     depthMap: depthImageUrl,
@@ -55,13 +55,16 @@ export function ImagePlane({ colorImageUrl, depthImageUrl }: ImagePlaneProps) {
       />
     </Plane>
   );
-}
+});
 
 export function DepthImagePlane({ files }: { files: File[] }) {
-  const { depthImagePath, colorImagePath } = useControls({
-    depthImagePath: './test_depth.png',
-    colorImagePath: './test_color.png',
-  });
+  const { depthImagePath, colorImagePath } = useControls(
+    {
+      depthImagePath: './test_depth.png',
+      colorImagePath: './test_color.png',
+    },
+    []
+  );
   const { state } = useDepthProcessor(files);
 
   return (
