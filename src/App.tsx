@@ -42,7 +42,7 @@ function App() {
         <OrbitControls />
       </Studio>
       <div id={'status'} className={'absolute top-0 left-0 w-full h-full pointer-events-none'}>
-        {JSON.stringify(status)}
+        <pre>{JSON.stringify(status, null, 2)}</pre>
       </div>
 
       {isDragActive ? <DragInfo>Drop the files here ...</DragInfo> : null}
