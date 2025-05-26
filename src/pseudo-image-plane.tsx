@@ -10,6 +10,7 @@ import { useControls } from "leva";
 import { useEffect, useLayoutEffect, useRef } from "react";
 import * as THREE from "three";
 
+import { useDepthProcessor } from "./hooks/use-depth-processor.ts";
 import { Pseudo3DMaterial } from "./pseudo3d-material.ts";
 
 extend({
@@ -66,17 +67,26 @@ export function ImagePlane({ colorImageUrl, depthImageUrl }: ImagePlaneProps) {
   );
 }
 
-export function DepthImagePlane() {
+export function DepthImagePlane({ files }: { files: File[] }) {
   const { depthImagePath, colorImagePath } = useControls({
     depthImagePath: "./test_depth.png",
     colorImagePath: "./test_color.png",
   });
+  const { state } = useDepthProcessor(files);
+
   return (
     <Bounds fit clip observe margin={2}>
-      <ImagePlane
-        colorImageUrl={colorImagePath}
-        depthImageUrl={depthImagePath}
-      />
+      {state.colorImage && state.depthImage ? (
+        <ImagePlane
+          colorImageUrl={state.colorImage}
+          depthImageUrl={state.depthImage}
+        />
+      ) : (
+        <ImagePlane
+          colorImageUrl={colorImagePath}
+          depthImageUrl={depthImagePath}
+        />
+      )}
     </Bounds>
   );
 }
