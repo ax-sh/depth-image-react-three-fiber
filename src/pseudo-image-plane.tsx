@@ -34,13 +34,13 @@ export function ImagePlane({ colorImageUrl, depthImageUrl }: ImagePlaneProps) {
     colorMap: colorImageUrl,
     depthMap: depthImageUrl,
   });
-  const bounds = useBounds();
+  // const bounds = useBounds();
 
   const aspect = useAspect(depthMap.image.width, depthMap.image.height, 1);
-  useLayoutEffect(() => {
-    // console.log(aspect, 333);
-    bounds.refresh().clip().fit();
-  }, [bounds]);
+  // useLayoutEffect(() => {
+  //   // console.log(aspect, 333);
+  //   bounds.refresh().clip().fit();
+  // }, [bounds]);
 
   const depthMaterial = useMouseMovementMaterial();
 
