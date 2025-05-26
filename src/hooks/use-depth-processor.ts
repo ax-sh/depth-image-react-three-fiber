@@ -1,7 +1,7 @@
-import { RawImage } from '@xenova/transformers';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { RawImage } from "@xenova/transformers";
+import { useLayoutEffect, useRef, useState } from "react";
 
-import { getPredictor } from './depth-estimation-predictor.ts';
+import { getPredictor } from "./depth-estimation-predictor.ts";
 
 async function makeDepthMap(file: File, progress_callback: CallableFunction) {
   const color = await RawImage.fromBlob(file);
@@ -12,7 +12,7 @@ async function makeDepthMap(file: File, progress_callback: CallableFunction) {
 
   const prediction = await predictor(color);
   if (Array.isArray(prediction)) {
-    throw new Error('not supported');
+    throw new Error("not supported");
   }
   const depth = prediction.depth;
   const colorImage = URL.createObjectURL(await color.toBlob());
@@ -25,8 +25,8 @@ export function useDepthProcessor(files: File[]) {
     colorImage: string;
     depthImage: string;
   }>({
-    colorImage: '',
-    depthImage: '',
+    colorImage: "",
+    depthImage: "",
   });
   const eventRef = useRef<unknown>({});
 

@@ -1,11 +1,17 @@
-import { Bounds, Html, Plane, useAspect, useBounds, useTexture } from '@react-three/drei';
-import { extend, useFrame } from '@react-three/fiber';
-import { useControls } from 'leva';
-import { useEffect, useLayoutEffect, useRef } from 'react';
-import * as THREE from 'three';
+import {
+  Bounds,
+  Plane,
+  useAspect,
+  useBounds,
+  useTexture,
+} from "@react-three/drei";
+import { extend, useFrame } from "@react-three/fiber";
+import { useControls } from "leva";
+import { useEffect, useLayoutEffect, useRef } from "react";
+import * as THREE from "three";
 
-import { useDepthProcessor } from './hooks/use-depth-processor.ts';
-import { Pseudo3DMaterial } from './pseudo3d-material.ts';
+import { useDepthProcessor } from "./hooks/use-depth-processor.ts";
+import { Pseudo3DMaterial } from "./pseudo3d-material.ts";
 
 extend({
   Pseudo3DMaterial,
@@ -20,7 +26,11 @@ function useMouseMovementMaterial() {
 
   const depthMaterial = useRef<{ uMouse: number[] }>({ uMouse: [0, 0] });
   useFrame(
-    (state) => (depthMaterial.current.uMouse = [state.pointer.x * delta, state.pointer.y * delta])
+    (state) =>
+      (depthMaterial.current.uMouse = [
+        state.pointer.x * delta,
+        state.pointer.y * delta,
+      ]),
   );
   return depthMaterial;
 }
@@ -59,20 +69,28 @@ export function ImagePlane({ colorImageUrl, depthImageUrl }: ImagePlaneProps) {
 
 export function DepthImagePlane({ files }: { files: File[] }) {
   const { depthImagePath, colorImagePath } = useControls({
-    depthImagePath: './test_depth.png',
-    colorImagePath: './test_color.png',
+    depthImagePath: "./test_depth.png",
+    colorImagePath: "./test_color.png",
   });
   const { state, eventRef } = useDepthProcessor(files);
+  useEffect(() => {
+    const s = document.getElementById("status");
+    if (!s) return;
+    s.innerHTML = JSON.stringify(eventRef.current, null, 2);
+  }, [eventRef]);
 
   return (
     <Bounds fit clip observe margin={2}>
-      <Html>
-        <pre>{JSON.stringify(eventRef.current, null, 2)}</pre>
-      </Html>
       {state.colorImage && state.depthImage ? (
-        <ImagePlane colorImageUrl={state.colorImage} depthImageUrl={state.depthImage} />
+        <ImagePlane
+          colorImageUrl={state.colorImage}
+          depthImageUrl={state.depthImage}
+        />
       ) : (
-        <ImagePlane colorImageUrl={colorImagePath} depthImageUrl={depthImagePath} />
+        <ImagePlane
+          colorImageUrl={colorImagePath}
+          depthImageUrl={depthImagePath}
+        />
       )}
     </Bounds>
   );
