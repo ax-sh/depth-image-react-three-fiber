@@ -12,7 +12,7 @@
     "prettier:fix": "prettier . --write",
     "pretty": "pretty-quick",
     "depth": "tsx make-depth.ts",
-    "deploy": "nlx build && nlx gh-pages -d dist && echo https://ax-sh.github.io/depth-image-react-three-fiber",
+    "deploy": "nr build && nr gh-pages -d dist && echo \"https://ax-sh.github.io/depth-image-react-three-fiber\"",
     "format": "nlx @biomejs/biome format --write ./src",
     "test": "vitest run",
     "test:watch": "vitest",
