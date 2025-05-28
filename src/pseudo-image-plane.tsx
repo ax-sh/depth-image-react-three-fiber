@@ -2,6 +2,7 @@ import { Bounds, Html, Plane, useAspect, useTexture } from '@react-three/drei';
 import { extend, useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
 import { memo, useRef } from 'react';
+import { ClimbingBoxLoader } from 'react-spinners';
 import * as THREE from 'three';
 
 // import { useDepthProcessor } from './hooks/use-depth-processor.ts';
@@ -70,7 +71,8 @@ export function DepthImagePlane({ files }: { files: File[] }) {
   if (isLoading)
     return (
       <Html center={true} className={'whitespace-nowrap text-4xl text-white'}>
-        Processing dropped image
+        Processing dropped image, might take a while as the model is large initially{' '}
+        <ClimbingBoxLoader />
       </Html>
     );
   if (!data)
