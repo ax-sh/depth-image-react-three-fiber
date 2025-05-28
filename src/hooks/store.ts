@@ -1,6 +1,6 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
-export type Status = 'initiate' | 'download' | 'progress' | 'done' | 'ready';
+export type Status = "initiate" | "download" | "progress" | "done" | "ready";
 export type StatusEvent = {
   status: Status;
   total?: number;

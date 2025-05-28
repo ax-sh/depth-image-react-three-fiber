@@ -1,8 +1,8 @@
-import { RawImage } from '@xenova/transformers';
-import { useLayoutEffect, useState } from 'react';
+import { RawImage } from "@xenova/transformers";
+import { useLayoutEffect, useState } from "react";
 
-import { getPredictor } from './depth-estimation-predictor.ts';
-import { StatusEvent, useAppStore } from './store.ts';
+import { getPredictor } from "./depth-estimation-predictor.ts";
+import { StatusEvent, useAppStore } from "./store.ts";
 
 type ImagePaths = {
   colorImage: string;
@@ -18,7 +18,7 @@ async function makeDepthMap(file: File, progress_callback: CallableFunction) {
 
   const prediction = await predictor(color);
   if (Array.isArray(prediction)) {
-    throw new Error('not supported');
+    throw new Error("not supported");
   }
   const depth = prediction.depth;
   const colorBlob = await color.toBlob();
@@ -38,9 +38,13 @@ export function useDepthProcessor(files: File[]) {
     if (!file) return;
 
     async function run() {
-      const { colorImage, depthImage } = await makeDepthMap(file, (event: StatusEvent) =>
-        // setStatus(event)
-        useAppStore.getState().setStatus(event)
+      const { colorImage, depthImage } = await makeDepthMap(
+        file,
+        (event: StatusEvent) =>
+          // setStatus(event)
+          useAppStore
+            .getState()
+            .setStatus(event),
       );
 
       setState({ colorImage, depthImage });

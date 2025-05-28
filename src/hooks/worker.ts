@@ -1,22 +1,32 @@
-import { DepthEstimationPipeline, RawImage, env, pipeline } from '@xenova/transformers';
+import {
+  DepthEstimationPipeline,
+  RawImage,
+  env,
+  pipeline,
+} from "@xenova/transformers";
 
-import { StatusEvent, useAppStore } from './store.ts';
+import { StatusEvent, useAppStore } from "./store.ts";
 
 env.allowLocalModels = true;
 // fixme temp fix need better solution
-const BASE_URL = 'http://192.168.1.83:8000/depth-image-react-three-fiber/public/models/';
+const BASE_URL =
+  "http://192.168.1.83:8000/depth-image-react-three-fiber/public/models/";
 env.localModelPath = BASE_URL;
 // env.localModelPath = './depth-image-react-three-fiber/models';
 
-const DEPTH_ESTIMATION = 'depth-estimation' as const;
+const DEPTH_ESTIMATION = "depth-estimation" as const;
 class DepthPredictPipeline {
-  static model = 'Xenova/dpt-hybrid-midas';
+  static model = "Xenova/dpt-hybrid-midas";
   static instance: DepthEstimationPipeline | null = null;
 
   static async getInstance(progress_callback: CallableFunction) {
-    this.instance ??= await pipeline<typeof DEPTH_ESTIMATION>(DEPTH_ESTIMATION, this.model, {
-      progress_callback,
-    });
+    this.instance ??= await pipeline<typeof DEPTH_ESTIMATION>(
+      DEPTH_ESTIMATION,
+      this.model,
+      {
+        progress_callback,
+      },
+    );
     return this.instance;
   }
 }
@@ -67,23 +77,23 @@ export async function run(file: File) {
   let ready = false;
   function progressHook(event: StatusEvent) {
     switch (event.status) {
-      case 'initiate':
+      case "initiate":
         // Model file start load: add a new progress item to the list.
         ready = false;
         break;
-      case 'progress':
+      case "progress":
         // Model file progress: update one of the progress items.
         useAppStore.getState().setStatus(event);
         break;
-      case 'ready':
+      case "ready":
         // Pipeline ready: the worker is ready to accept messages.
         ready = true;
         break;
-      case 'done':
+      case "done":
         // Model file loaded: remove the progress item from the list.
         break;
       default:
-        console.log('doooo', event);
+        console.log("doooo", event);
     }
   }
 
@@ -93,7 +103,7 @@ export async function run(file: File) {
   const prediction = await predictor(image);
   console.log({ ready });
   if (Array.isArray(prediction)) {
-    throw new Error('not supported');
+    throw new Error("not supported");
   }
   console.log(prediction);
   const depth = prediction.depth;

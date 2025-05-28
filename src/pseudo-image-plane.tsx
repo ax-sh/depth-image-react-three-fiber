@@ -69,13 +69,19 @@ export function DepthImagePlane({ files }: { files: File[] }) {
   const { data, isLoading } = useDepthQuery(files?.[0]);
   if (isLoading)
     return (
-      <Html center={true} className={'whitespace-nowrap'}>
+      <Html center={true} className={'whitespace-nowrap text-4xl'}>
         Processing dropped image
       </Html>
     );
   if (!data)
     return (
       <Bounds fit clip observe margin={2} maxDuration={0}>
+        <Html
+          center={true}
+          className={'whitespace-nowrap text-shadow-lg/30 text-3xl pointer-events-none'}
+        >
+          Drop file here to process
+        </Html>
         <FallbackImagePlane />
       </Bounds>
     );
@@ -84,7 +90,7 @@ export function DepthImagePlane({ files }: { files: File[] }) {
   return (
     <Bounds fit clip observe margin={2} maxDuration={0}>
       {/*<ambientLight intensity={0.5} />*/}
-      {[files.length > 0, state.colorImage, state.depthImage].every(Boolean) ? (
+      {[state.colorImage, state.depthImage].every(Boolean) ? (
         <ImagePlane colorImageUrl={state.colorImage} depthImageUrl={state.depthImage} />
       ) : (
         <FallbackImagePlane />

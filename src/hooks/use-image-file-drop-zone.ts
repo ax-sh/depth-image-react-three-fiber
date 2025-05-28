@@ -1,7 +1,7 @@
-import { useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { useCallback } from "react";
+import { useDropzone } from "react-dropzone";
 
-import { useAppStore } from './store.ts';
+import { useAppStore } from "./store.ts";
 
 export function useImageFileDropZone() {
   // Get the action to add files from the Zustand store.
@@ -17,7 +17,7 @@ export function useImageFileDropZone() {
     (acceptedFiles: File[]) => {
       addFiles(acceptedFiles); // Use the Zustand action to update files
     },
-    [addFiles] // `addFiles` is stable, so this useCallback dependency array is fine
+    [addFiles], // `addFiles` is stable, so this useCallback dependency array is fine
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
