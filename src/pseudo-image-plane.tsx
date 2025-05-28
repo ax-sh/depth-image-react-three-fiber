@@ -1,4 +1,4 @@
-import { Bounds, Plane, useAspect, useTexture } from '@react-three/drei';
+import { Bounds, Html, Plane, useAspect, useTexture } from '@react-three/drei';
 import { extend, useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
 import { memo, useRef } from 'react';
@@ -67,8 +67,18 @@ function FallbackImagePlane() {
 export function DepthImagePlane({ files }: { files: File[] }) {
   // const { state } = useDepthProcessor(files);
   const { data, isLoading } = useDepthQuery(files?.[0]);
-  if (isLoading) return;
-  if (!data) return;
+  if (isLoading)
+    return (
+      <Html center={true} className={'whitespace-nowrap'}>
+        Processing dropped image
+      </Html>
+    );
+  if (!data)
+    return (
+      <Bounds fit clip observe margin={2} maxDuration={0}>
+        <FallbackImagePlane />
+      </Bounds>
+    );
   const state = data;
 
   return (
