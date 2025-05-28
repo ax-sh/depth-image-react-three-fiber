@@ -69,7 +69,7 @@ export function DepthImagePlane({ files }: { files: File[] }) {
   const { data, isLoading } = useDepthQuery(files?.[0]);
   if (isLoading)
     return (
-      <Html center={true} className={'whitespace-nowrap text-4xl'}>
+      <Html center={true} className={'whitespace-nowrap text-4xl text-white'}>
         Processing dropped image
       </Html>
     );
@@ -78,7 +78,7 @@ export function DepthImagePlane({ files }: { files: File[] }) {
       <Bounds fit clip observe margin={2} maxDuration={0}>
         <Html
           center={true}
-          className={'whitespace-nowrap text-shadow-lg/30 text-3xl pointer-events-none'}
+          className={'whitespace-nowrap text-shadow-lg/30 text-3xl pointer-events-none text-white'}
         >
           Drop file here to process
         </Html>
