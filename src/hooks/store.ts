@@ -1,6 +1,7 @@
-import { create } from "zustand";
+import * as Comlink from 'comlink';
+import { create } from 'zustand';
 
-export type Status = "initiate" | "download" | "progress" | "done" | "ready";
+export type Status = 'initiate' | 'download' | 'progress' | 'done' | 'ready';
 export type StatusEvent = {
   status: Status;
   total?: number;
@@ -37,3 +38,5 @@ export const useAppStore = create<AppState & FileState>()((set) => ({
       files: state.files.filter((f) => f !== fileToRemove),
     })),
 }));
+
+Comlink.expose(useAppStore);
